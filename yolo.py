@@ -3,6 +3,7 @@ import numpy
 import cv2
 
 model = YOLO("yolov8n.pt", "v8")
+# model.train (epochs=5)
 
 # detection_output = model.predict(source = "images/test_image_close.PNG", conf=0.25, save=True)
 
@@ -33,7 +34,7 @@ while True:
         print("Frame not recieved. Exiting...")
         break
 
-    frame = cv2.resize(frame, (frame_width, frame_height))
+    # frame = cv2.resize(frame, (frame_width, frame_height))
 
     detect_params = model.predict(source=[frame], conf=0.40, save=False)
 
@@ -41,6 +42,8 @@ while True:
     if len(params) != 0:
         for count in range(len(detect_params[0])):
             # print(count)
+
+            # print(detect_params)
 
             detections = detect_params[0].boxes
             single_detect = detections[count]
