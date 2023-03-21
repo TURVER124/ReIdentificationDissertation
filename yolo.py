@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-import numpy, Player
+import numpy, Player, math
 import cv2
 
 model = YOLO("yolov8n.pt", "v8")
@@ -15,18 +15,44 @@ if not cap.isOpened():
     print("Unable to open specified video")
     exit()
 
+# Set an array of player objects to keep track of each player
+players = []
+num_players = 0
 first_frame = True
 
+# Check detection against each player and find the smallest Euclidean distance
+def comp_detect_to_player_bb(detect_bb):
+    closest = 10000000000000
+    id = -1
+
+    for player in players:
+        start_diff = bb_diff(player.bound_box[0], player.bound_box[1], detect_bb[0], detect_bb[1])
+        end_diff = bb_diff(player.bound_box[2], player.bound_box[3], detect_bb[2], detect_bb[3])
+        tot_diff = start_diff + end_diff
+        if tot_diff < closest:
+            closest = tot_diff
+            id = player.id
+
+    return id
+
+# Find the Euclidean distance between the start of two bounding boxes
+def bb_diff(player_x, player_y, detect_x, detect_y):
+    euclid = math.sqrt(((player_x - detect_x) * (player_x - detect_x)) +
+                        ((player_y - detect_y) * (player_y - detect_y)))
+    
+    return abs(euclid)
+
+def get_shirt_colour():
+    print()
+
+
+# for x in range(20):
 while True:
     ret, frame = cap.read()
 
     if not ret:
         print("Frame not recieved. Exiting...")
         break
-
-    # Set an array of player objects to keep track of each player
-    players = []
-    num_players = []
 
     #Resize the video so that the detection algorithm runs slower
     scale_fact = 0.5
@@ -49,21 +75,26 @@ while True:
 
             # Check if the detection is a person
             if class_id == 0.0:
+                # Get detections on the first frame to get a basic list of players
                 if first_frame:
                     new_player = Player.Player(player_id, bb, conf, "Blue")
                     players.append(new_player)
+                    display_id = "Player_" + str(players[player_id].id)
+                else:
+                    player_comp_id = comp_detect_to_player_bb(bb)
+                    # print("This detection is " + str(players[player_comp_id].id))
+                    players[player_comp_id].bound_box = bb
+                    display_id = "Player_" + str(players[player_comp_id].id)
                 #Draw the bounding box onto each person class
                 cv2.rectangle(frame,
                     (int(bb[0]), int(bb[1])),
                     (int(bb[2]), int(bb[3])), (0,0,255), 2)
                 #Add the confidence rate and player id number to the bounding box
-                cv2.putText(frame, (str(player_id) + " - " + str(conf)),
-                            (int(bb[0]), int(bb[1])-10), 3, 0.6, (255,255,255))
+                cv2.putText(frame, (display_id),
+                            (int(bb[0]), int(bb[1])-10), 4, 0.8, (255,255,255))
                 
                 player_id += 1
-                first_frame = False
-
-                print(players)
+        first_frame = False
                 
 
     cv2.imshow('Frame', frame)
