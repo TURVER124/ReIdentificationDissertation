@@ -2,11 +2,11 @@ from ultralytics import YOLO
 import numpy, Player, math
 import cv2
 
-model = YOLO("yolov8n.pt", "v8")
+model = YOLO("yolov8x.pt", "v8")
 # model.train (epochs=5)
 
 #Open video file, getting the height and width of the frames
-cap = cv2.VideoCapture('videos/Video3/Video3_Clip2.mp4')
+cap = cv2.VideoCapture('videos/Video4/Video4_Clip1.mp4')
 width  = cap.get(3)
 height  = cap.get(4)
 
@@ -33,7 +33,8 @@ def comp_detect_to_player_bb(detect_bb):
             closest = tot_diff
             id = player.id
 
-    return id
+    return closest, id
+
 
 # Find the Euclidean distance between the start of two bounding boxes
 def bb_diff(player_x, player_y, detect_x, detect_y):
@@ -60,7 +61,7 @@ while True:
 
     #For each frame run the detection algorithm (tracking by detection) and convert
     #parameter to numpy array
-    detect_params = model.predict(source=[frame], conf=0.60, save=False)
+    detect_params = model.predict(source=[frame], conf=0.55, save=False)
     params = detect_params[0].numpy()
     player_id = 0
     if len(params) != 0:
@@ -80,11 +81,18 @@ while True:
                     new_player = Player.Player(player_id, bb, conf, "Blue")
                     players.append(new_player)
                     display_id = "Player_" + str(players[player_id].id)
+                    player_id += 1
                 else:
-                    player_comp_id = comp_detect_to_player_bb(bb)
+                    dist_diff, player_comp_id = comp_detect_to_player_bb(bb)
                     # print("This detection is " + str(players[player_comp_id].id))
-                    players[player_comp_id].bound_box = bb
-                    display_id = "Player_" + str(players[player_comp_id].id)
+                    if (dist_diff < 20):
+                        players[player_comp_id].bound_box = bb
+                        display_id = "Player_" + str(players[player_comp_id].id)
+                    else:
+                        new_player = Player.Player(player_id, bb, conf, "Blue")
+                        players.append(new_player)
+                        display_id = "Player_" + str(players[player_id].id)
+                        player_id += 1
                 #Draw the bounding box onto each person class
                 cv2.rectangle(frame,
                     (int(bb[0]), int(bb[1])),
@@ -93,7 +101,6 @@ while True:
                 cv2.putText(frame, (display_id),
                             (int(bb[0]), int(bb[1])-10), 4, 0.8, (255,255,255))
                 
-                player_id += 1
         first_frame = False
                 
 
