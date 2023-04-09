@@ -6,7 +6,7 @@ model = YOLO("yolov8n.pt", "v8")
 # model.train (epochs=5)
 
 #Open video file, getting the height and width of the frames
-cap = cv2.VideoCapture('videos/Video4/Video4_Clip1.mp4')
+cap = cv2.VideoCapture('videos/Video3/Video3_Clip2.mp4')
 width  = cap.get(3)
 height  = cap.get(4)
 
@@ -61,7 +61,7 @@ while True:
 
     #For each frame run the detection algorithm (tracking by detection) and convert
     #parameter to numpy array
-    detect_params = model.predict(source=[frame], conf=0.5, save=False)
+    detect_params = model.predict(source=[frame], conf=0.45, save=False)
     params = detect_params[0].numpy()
     player_id = 0
     if len(params) != 0:
