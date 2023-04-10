@@ -1,12 +1,13 @@
 from ultralytics import YOLO
-import numpy, Player, math
+from Player import Player
+import numpy, math
 import cv2
 
 model = YOLO("yolov8n.pt", "v8")
 # model.train (epochs=5)
 
 #Open video file, getting the height and width of the frames
-cap = cv2.VideoCapture('videos/Video3/Video3_Clip2.mp4')
+cap = cv2.VideoCapture('videos/Video3/Video3_Clip1.mp4')
 width  = cap.get(3)
 height  = cap.get(4)
 
@@ -19,21 +20,27 @@ if not cap.isOpened():
 players = []
 num_players = 0
 first_frame = True
+player_id = 0
 
 # Check detection against each player and find the smallest Euclidean distance
 def comp_detect_to_player_bb(detect_bb):
-    closest = 10000000000000
-    id = -1
+    players_by_dist = []
+    dist = []
 
     for player in players:
         start_diff = bb_diff(player.bound_box[0], player.bound_box[1], detect_bb[0], detect_bb[1])
         end_diff = bb_diff(player.bound_box[2], player.bound_box[3], detect_bb[2], detect_bb[3])
         tot_diff = start_diff + end_diff
-        if tot_diff < closest:
-            closest = tot_diff
-            id = player.id
+        players_by_dist.append(player)
+        dist.append(tot_diff)
 
-    return closest, id
+    players_by_dist = numpy.array(players_by_dist)
+    dist = numpy.array(dist)
+    index = dist.argsort()
+    sorted_player_dist = players_by_dist[index]
+    dist.sort()
+
+    return sorted_player_dist, dist
 
 
 # Find the Euclidean distance between the start of two bounding boxes
@@ -46,8 +53,8 @@ def bb_diff(player_x, player_y, detect_x, detect_y):
 def get_shirt_colour():
     print()
 
-
-# for x in range(20):
+# Main loop taking each frame at a time until the video is finished
+# for x in range(3):
 while True:
     ret, frame = cap.read()
 
@@ -55,15 +62,14 @@ while True:
         print("Frame not recieved. Exiting...")
         break
 
-    #Resize the video so that the detection algorithm runs slower
-    scale_fact = 0.5
+    # Resize the video so that the detection algorithm runs faster
+    # scale_fact = 0.5
     # frame = cv2.resize(frame, (int(width*scale_fact), int(height*scale_fact)))
 
-    #For each frame run the detection algorithm (tracking by detection) and convert
-    #parameter to numpy array
+    # For each frame run the detection algorithm (tracking by detection) and convert
+    # parameter to numpy array
     detect_params = model.predict(source=[frame], conf=0.45, save=False)
     params = detect_params[0].numpy()
-    player_id = 0
     if len(params) != 0:
         for count in range(len(detect_params[0])):
 
@@ -78,30 +84,35 @@ while True:
             if class_id == 0.0:
                 # Get detections on the first frame to get a basic list of players
                 if first_frame:
-                    new_player = Player.Player(player_id, bb, conf, "Blue")
+                    new_player = Player(player_id, bb, conf, "Blue")
                     players.append(new_player)
                     display_id = "Player_" + str(players[player_id].id)
                     player_id += 1
+                
+                # If the detection is not on the first frame
                 else:
-                    dist_diff, player_comp_id = comp_detect_to_player_bb(bb)
-                    # print("This detection is " + str(players[player_comp_id].id))
-                    if (dist_diff < 20):
-                        players[player_comp_id].bound_box = bb
-                        display_id = "Player_" + str(players[player_comp_id].id)
-                    else:
-                        new_player = Player.Player(player_id, bb, conf, "Blue")
+                    # Get the distances from the current bouning box to the already detected ones
+                    players_by_distance, distances = comp_detect_to_player_bb(bb)
+                    print(str(players_by_distance[0]) + "\t&&\t" + str(players_by_distance[1]))
+                    print(distances[0])
+                    if (distances[0] < 20): # If the distance is below the threshold then this is likely to be the same player
+                        players_by_distance[0].bound_box = bb
+                        display_id = "Player_" + str(players_by_distance[0].id)
+                    else: # If the distance is above the threshold then this is likely to be a player not already in the list
+                        new_player = Player(player_id, bb, conf, "")
                         players.append(new_player)
                         display_id = "Player_" + str(players[player_id].id)
                         player_id += 1
-                #Draw the bounding box onto each person class
+                # Draw the bounding box onto each person class
                 cv2.rectangle(frame,
                     (int(bb[0]), int(bb[1])),
                     (int(bb[2]), int(bb[3])), (0,0,255), 2)
-                #Add the confidence rate and player id number to the bounding box
+                # Add the confidence rate and player id number to the bounding box
                 cv2.putText(frame, (display_id),
                             (int(bb[0]), int(bb[1])-10), 4, 0.8, (255,255,255))
                 
         first_frame = False
+        print(player_id)
                 
 
     cv2.imshow('Frame', frame)

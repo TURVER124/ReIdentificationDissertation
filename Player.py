@@ -4,3 +4,6 @@ class Player:
         self.bound_box = bb
         self.confidence = conf
         self.colour = colour
+
+    def __str__(self):
+        return f'Player ID: {self.id}'
