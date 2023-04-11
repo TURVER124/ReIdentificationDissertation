@@ -7,7 +7,7 @@ model = YOLO("yolov8n.pt", "v8")
 # model.train (epochs=5)
 
 #Open video file, getting the height and width of the frames
-cap = cv2.VideoCapture('videos/Video3/Video3_Clip1.mp4')
+cap = cv2.VideoCapture('videos/Video3/Video3_Clip2.mp4')
 width  = cap.get(3)
 height  = cap.get(4)
 
@@ -49,6 +49,13 @@ def bb_diff(player_x, player_y, detect_x, detect_y):
                         ((player_y - detect_y) * (player_y - detect_y)))
     
     return abs(euclid)
+
+def get_dist_thrshold(current, preceding):
+    avg_w = ((current[2] - current[0]) + (preceding[2] - preceding[0]) / 2)
+    avg_h = ((current[3] - current[1]) + (preceding[2] - preceding[0]) / 2)
+    thresh = (avg_w + avg_h) * 0.15
+    return thresh
+
 
 def get_shirt_colour():
     print()
@@ -93,10 +100,16 @@ while True:
                 else:
                     # Get the distances from the current bouning box to the already detected ones
                     players_by_distance, distances = comp_detect_to_player_bb(bb)
-                    print(str(players_by_distance[0]) + "\t&&\t" + str(players_by_distance[1]))
-                    print(distances[0])
-                    if (distances[0] < 20): # If the distance is below the threshold then this is likely to be the same player
-                        players_by_distance[0].bound_box = bb
+                    # print(str(players_by_distance[0]) + "\t&&\t" + str(players_by_distance[1]))
+                    # print(distances[0])
+                    threshold = get_dist_thrshold(bb, players_by_distance[0].bound_box)
+                    if (threshold < distances[0]):
+                        cv2.rectangle(frame,
+                            (int(players_by_distance[0].bound_box[0]), int(players_by_distance[0].bound_box[1])),
+                            (int(players_by_distance[0].bound_box[2]), int(players_by_distance[0].bound_box[3])), (255,0,0), 2)
+                        print(str(threshold) + " : " + str(distances[0]))
+                    if (distances[0] < threshold): # If the distance is below the threshold then this is likely to be the same player
+                        players[players_by_distance[0].id].bound_box = bb
                         display_id = "Player_" + str(players_by_distance[0].id)
                     else: # If the distance is above the threshold then this is likely to be a player not already in the list
                         new_player = Player(player_id, bb, conf, "")
