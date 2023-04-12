@@ -78,8 +78,10 @@ while True:
     detect_params = model.predict(source=[frame], conf=0.45, save=False)
     params = detect_params[0].numpy()
     if len(params) != 0:
-        for count in range(len(detect_params[0])):
 
+        players_still_detected = []
+
+        for count in range(len(detect_params[0])):
             # Split into different parameters from the detection
             detections = detect_params[0].boxes
             single_detect = detections[count]
@@ -103,20 +105,26 @@ while True:
                     # print(str(players_by_distance[0]) + "\t&&\t" + str(players_by_distance[1]))
                     # print(distances[0])
                     threshold = get_dist_thrshold(bb, players_by_distance[0].bound_box)
+                    closest_player_id = players_by_distance[0].id
+
                     if (threshold < distances[0]):
                         cv2.rectangle(frame,
                             (int(players_by_distance[0].bound_box[0]), int(players_by_distance[0].bound_box[1])),
                             (int(players_by_distance[0].bound_box[2]), int(players_by_distance[0].bound_box[3])), (255,0,0), 2)
-                        print(str(threshold) + " : " + str(distances[0]))
+                        # print(str(threshold) + " : " + str(distances[0]))
+                        
+                        
                     if (distances[0] < threshold): # If the distance is below the threshold then this is likely to be the same player
-                        players[players_by_distance[0].id].bound_box = bb
+                        players[closest_player_id].bound_box = bb
                         display_id = "Player_" + str(players_by_distance[0].id)
                     else: # If the distance is above the threshold then this is likely to be a player not already in the list
                         new_player = Player(player_id, bb, conf, "")
                         players.append(new_player)
-                        display_id = "Player_" + str(players[player_id].id)
+                        display_id = "Player_" + str(closest_player_id)
                         player_id += 1
                 # Draw the bounding box onto each person class
+                for player in players:
+                    print(player)
                 cv2.rectangle(frame,
                     (int(bb[0]), int(bb[1])),
                     (int(bb[2]), int(bb[3])), (0,0,255), 2)
