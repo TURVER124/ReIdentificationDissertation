@@ -1,9 +1,9 @@
 class Player:
-    def __init__(self, id, bb, conf, colour) -> None:
-        self.id = id
+    def __init__(self, bb, conf) -> None:
+        self.id = -1
         self.bound_box = bb
         self.confidence = conf
-        self.colour = colour
+        self.colour = (0,0,0)
 
     def __str__(self):
         return f'Player ID: {self.id}'
