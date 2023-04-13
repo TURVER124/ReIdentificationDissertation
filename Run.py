@@ -2,7 +2,7 @@ import cv2, time
 from Frame import Frame
 
 class Run:
-    def __init__(self, id, model, vid_path, heur="TRACKING") -> None:
+    def __init__(self, id, model, vid_path, heur="NONE") -> None:
         self.id = id # ID number of the current run
         self.model = model # Yolo model to be used
         self.vid_path = vid_path # Path to the video this run is using
@@ -55,6 +55,8 @@ class Run:
             cv2.imshow('window_name', current_frame.frame_anot)
             cv2.setWindowTitle('window_name', f'Frame {current_frame.index}')
             key = cv2.waitKey(0)
+            while key != ord('0') and key != ord('1') and key != ord('q'):
+                key = cv2.waitKey(0)
             if  key == ord('0'):
                 current_frame.maintained = False
             elif key == ord('1'):

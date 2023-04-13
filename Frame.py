@@ -1,5 +1,5 @@
 from Player import Player
-import cv2
+import cv2, math, numpy
 
 class Frame:
     def __init__(self, index, frame_img) -> None:
@@ -54,11 +54,65 @@ class Frame:
                         (int(bb[0]), int(bb[1])-10), 4, 0.8, (255,255,255))
         self.frame_anot = ano_frame.copy()
 
+    # Label players in order of detection
+    def label_detec_order(self):
+        index = 0
+        for cur_player in self.player_list:
+            cur_player.id = index
+            index += 1
+
+    # Simple tracking method, keep id using Euclidean dist of bouding boxes from one frame to another 
+    def tracking(self, prev_frame, top_n):
+        closests = []
+        distances = []
+        for cur_player in self.player_list:
+            closest = []
+            dist = []
+            for prev_player in prev_frame.player_list:
+                start_diff = self.bb_diff(prev_player.bound_box[0], prev_player.bound_box[1],
+                                          cur_player.bound_box[0], cur_player.bound_box[1])
+                end_diff = self.bb_diff(prev_player.bound_box[2], prev_player.bound_box[3],
+                                        cur_player.bound_box[2], cur_player.bound_box[3])
+                tot_diff = start_diff + end_diff
+                closest.append(prev_player)
+                dist.append(tot_diff)
+            
+            closest = numpy.array(closest)
+            dist = numpy.array(dist)
+            index = dist.argsort()
+            closest_player_detections = closest[index]
+            dist.sort()
+            closests.append(closest_player_detections[:top_n])
+            distances.append(dist[:top_n])
+
+
+        return closests, distances
+
+    # Find the Euclidean distance between the start of two bounding boxes
+    def bb_diff(self, player_x, player_y, detect_x, detect_y):
+        euclid = math.sqrt(((player_x - detect_x) * (player_x - detect_x)) +
+                            ((player_y - detect_y) * (player_y - detect_y)))
+        
+        return abs(euclid)
+                
+
     # Determine the ids of the players in the current frame using specified heuristic
+    # NONE - No re-identification used just labeled in the order players are detected
     # TRACKING - Just the tracking by detection using the closest player from the last frame
     #            which is calculated using the Euclidean distance and a threshold
     # SPEED - 
     # DIR - 
     # SPEED_DIR - 
     def determine_ids(self, frames, heuristic):
-        print("Determining the IDs")
+        top_n = 2
+
+        if heuristic == "NONE":
+            self.label_detec_order()
+
+        elif heuristic == "TRACKING":
+            most_rec_frame = frames[-1:]
+            closest_match, distance_diff = self.tracking(most_rec_frame[0], top_n)
+            index = 0
+            for player in self.player_list:
+                player.id = (closest_match[index][0]).id
+                index += 1
