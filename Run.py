@@ -52,7 +52,9 @@ class Run:
             # Manual input as to whether the system has been able to maintain consistant player identity
             # Enter 0 if the identities are maintained from first frame
             # Enter 1 if identities have been switched
-            cv2.imshow('window_name', current_frame.frame_anot)
+
+            resize = cv2.resize(current_frame.frame_anot,dsize=None,fx=1.3,fy=1.3)
+            cv2.imshow('window_name', resize)
             cv2.setWindowTitle('window_name', f'Frame {current_frame.index}')
             key = cv2.waitKey(0)
             while key != ord('0') and key != ord('1') and key != ord('q'):

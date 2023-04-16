@@ -1,5 +1,5 @@
 from Player import Player
-import cv2, math, numpy, copy
+import cv2, math, numpy
 from itertools import chain
 
 class Frame:
@@ -63,79 +63,46 @@ class Frame:
             index += 1
 
     # Simple tracking method, keep id using Euclidean dist of bouding boxes from one frame to another 
-    def tracking(self, frames, top_n):
-        prev_frame = (frames[-1:])[0]
-        poss_play_ids = copy.deepcopy(self.player_list)
-        taken_ids = []
-
-        # Iterate through each player in the previous frame
-        for prev_player in prev_frame.player_list:
-            lowest_diff = 100000000
-            lowest_ind = 0
-            index = 0
-            for cur_player in self.player_list:
-                start_diff, end_diff = prev_player.bb_diff(cur_player)
+    def tracking(self, prev_frame, top_n):
+        closests = []
+        distances = []
+        for cur_player in self.player_list:
+            closest = []
+            dist = []
+            for prev_player in prev_frame.player_list:
+                start_diff = self.bb_diff(prev_player.bound_box[0], prev_player.bound_box[1],
+                                          cur_player.bound_box[0], cur_player.bound_box[1])
+                end_diff = self.bb_diff(prev_player.bound_box[2], prev_player.bound_box[3],
+                                        cur_player.bound_box[2], cur_player.bound_box[3])
                 tot_diff = start_diff + end_diff
-                if tot_diff < lowest_diff:
-                    lowest_diff = tot_diff
-                    lowest_ind = index
-                index += 1
-                
-            if poss_play_ids[lowest_ind].dist_diff > lowest_diff:
-                poss_play_ids[lowest_ind].dist_diff = lowest_diff
-                poss_play_ids[lowest_ind].id = prev_player.id
-                taken_ids.append(prev_player.id)
+                closest.append(prev_player)
+                dist.append(tot_diff)
+            
+            closest = numpy.array(closest)
+            dist = numpy.array(dist)
+            index = dist.argsort()
+            closest_player_detections = closest[index]
+            dist.sort()
+            closests.append(closest_player_detections[:top_n])
+            distances.append(dist[:top_n])
 
+        self.matchup(closests, distances, top_n)
 
-        next_id = self.get_next_avil_id(frames)
-        for player in poss_play_ids:
-            print(player)
+        return closests, distances
 
-            if player.id == -1:
-                pos_matches = []
-                if len(frames) < 5:
-                    for s_frame in frames:
-                        for pos_player in s_frame.player_list:
-                            if pos_player.id not in taken_ids:
-                                pos_matches.append(copy.deepcopy(pos_player))
-                else:
-                    for s_frame in frames[-5:]:
-                        for pos_player in s_frame.player_list:
-                            if pos_player.id not in taken_ids:
-                                pos_matches.append(copy.deepcopy(pos_player))
-                print(len(pos_matches))
-                if len(pos_matches) > 0:
-                    closest = None
-                    diff = 1000000
-                    for match in pos_matches:
-                        start_diff, end_diff = match.bb_diff(player)
-                        tot_diff = start_diff + end_diff
-                        if tot_diff < diff:
-                            diff = tot_diff
-                            closest = match
-                    print(f"Diff: {diff} \t Threshold: {closest.get_dist_thrshold(player)}")
-                    if diff < closest.get_dist_thrshold(player):
-                        player.id = closest.id
-                    else:
-                        player.id = next_id
-                        next_id += 1
-                else:
-                    player.id = next_id
-                    next_id += 1
+    def matchup(self, closests, distances, num_posib):
+        for i in range(len(closests)):
+            for j in range(len(closests)):
+                if i != j and closests[i][0] == closests[j][0]:
+                    print(f"{self.player_list[i]} : {self.player_list[j]}")
 
-        return poss_play_ids
-
-    # Find the next free player id number
-    def get_next_avil_id(self, frames):
-        largest_id = 0
-        for frame in frames:
-            for player in frame.player_list:
-                if player.id > largest_id:
-                    largest_id = player.id
-
-        return largest_id + 1
 
     # Find the Euclidean distance between the start of two bounding boxes
+    def bb_diff(self, player_x, player_y, detect_x, detect_y):
+        euclid = math.sqrt(((player_x - detect_x) * (player_x - detect_x)) +
+                            ((player_y - detect_y) * (player_y - detect_y)))
+        
+        return abs(euclid)
 
 
     def find_large_dist(self, dist, amount):
@@ -171,6 +138,22 @@ class Frame:
             self.label_detec_order()
 
         elif heuristic == "TRACKING":
-            pos_ids = self.tracking(frames, top_n)
-            for i in range(len(self.player_list)):
-                self.player_list[i].id = pos_ids[i].id
+            most_rec_frame = (frames[-1:])[0]
+            closest_match, distance_diff = self.tracking(most_rec_frame, top_n)
+
+            # Check if a new player has been detected
+            player_num_dif = len(self.player_list) - len(most_rec_frame.player_list)
+            if player_num_dif > 0:
+                fur_dist_ind = self.find_large_dist(distance_diff, player_num_dif)
+            else:
+                fur_dist_ind = -1
+
+            index = 0
+            for player in self.player_list:
+                if index != fur_dist_ind:
+                    player.id = (closest_match[index][0]).id
+                    index += 1
+                else:
+                    print("Entered this")
+                    player.id = self.get_highest_id(frames)
+                    index += 1
