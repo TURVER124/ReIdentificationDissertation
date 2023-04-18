@@ -8,7 +8,7 @@ print(cv2.__version__)
 # Import the model to be used
 model = YOLO("yolov8n.pt", "v8")
 
-file_path = 'videos/Video3/Clip2.mp4'
+file_path = 'videos/Video3/Clip4.mp4'
 
 run = Run(1, model, file_path, "TRACKING")
 run.main()
