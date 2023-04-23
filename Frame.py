@@ -2,7 +2,7 @@ from Player import Player
 import cv2, copy
 
 class Frame:
-    def __init__(self, index, frame_img) -> None:
+    def __init__(self, index, frame_img=None) -> None:
         self.index = index # Index of the frame in the video sqauence
         self.frame_image = frame_img # The actual image of the frame as an array
         self.frame_anot = None
@@ -14,7 +14,12 @@ class Frame:
         return num_players
 
     def __str__(self):
-        return f'Frame Index: {self.index} - {self.maintained}'
+        string = f'Frame index: {self.index}\n'
+        string += f'Frame maintained: {self.maintained}\n'
+        for player in self.player_list:
+            string += f'Player: {player.id} - {player.bound_box}\n'
+        
+        return string
     
     # Run the Yolo detection on the single frame populate players
     def run_detection(self, model):
