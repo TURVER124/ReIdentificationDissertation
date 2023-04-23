@@ -4,7 +4,7 @@ from collections import Counter
 import numpy as np
 
 class Player:
-    def __init__(self, bb, conf) -> None:
+    def __init__(self, bb, conf=0) -> None:
         self.id = -1
         self.bound_box = bb
         self.confidence = conf
@@ -98,7 +98,17 @@ class Player:
                 return False
         else:
             return False
-
+        
+    
+    def equal(self, sec_player):
+        if self.id == sec_player.id:
+            if (self.bound_box == sec_player.bound_box).all():
+                return True
+            else:
+                return False
+        else:
+            return False
+        
 
     def __str__(self):
         return f'Player ID: {self.id}'

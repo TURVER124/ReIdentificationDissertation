@@ -70,7 +70,7 @@ class Frame:
             index += 1
 
     # Simple tracking method, keep id using Euclidean dist of bouding boxes from one frame to another 
-    def tracking(self, frames):
+    def bb_diff(self, frames):
         prev_frame = (frames[-1:])[0]
         poss_play_ids = copy.deepcopy(self.player_list)
         taken_ids = []
@@ -158,6 +158,23 @@ class Frame:
                 if player.id > largest_id:
                     largest_id = player.id
         return largest_id
+    
+    def compare(self, sec_frame):
+        if self.index == sec_frame.index:
+            equal_players = 0
+
+            for f1_player in self.player_list:
+                for f2_player in sec_frame.player_list:
+                    same_player = f1_player.equal(f2_player)
+                    if same_player:
+                        equal_players += 1
+            if equal_players == len(self.player_list):
+                return True
+            else:
+                return False
+        else:
+            return False
+
 
 
     # Determine the ids of the players in the current frame using specified heuristic
@@ -172,7 +189,7 @@ class Frame:
         if heuristic == "NONE":
             self.label_detec_order()
 
-        elif heuristic == "TRACKING":
-            pos_ids = self.tracking(frames)
+        elif heuristic == "BB_DIFF":
+            pos_ids = self.bb_diff(frames)
             for i in range(len(self.player_list)):
                 self.player_list[i].id = pos_ids[i].id

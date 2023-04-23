@@ -2,13 +2,13 @@ import cv2
 from Frame import Frame
 
 class Run:
-    def __init__(self, id, model, vid_path, heur="NONE") -> None:
-        self.id = id # ID number of the current run
+    def __init__(self, model, vid_path, meth="NONE", show=False) -> None:
         self.model = model # Yolo model to be used
         self.vid_path = vid_path+'.mp4' # Path to the video this run is using
         self.frames = [] # List of frames
         self.percent_corr = 0 # Percentage of fames with consistent identities
-        self.heuristic = heur
+        self.method = meth
+        self.show = show
 
     def __str__(self):
         return f'Run {self.id}'
@@ -34,6 +34,9 @@ class Run:
                 print("Frame not recieved. Exiting...")
                 break
 
+            sf = 720 / width 
+            frame = cv2.resize(frame, dsize=(720, int(height*sf)))
+
             # Create a new frame object and run the detector on it
             current_frame = Frame(frame_index, frame)
             current_frame.run_detection(self.model)
@@ -44,9 +47,9 @@ class Run:
                 cv2.imshow('First Frame', current_frame.frame_anot)
             else:
                 if len(self.frames) < 5:
-                    current_frame.determine_ids(self.frames, self.heuristic)
+                    current_frame.determine_ids(self.frames, self.method)
                 else:
-                    current_frame.determine_ids(self.frames[-5:], self.heuristic)
+                    current_frame.determine_ids(self.frames[-5:], self.method)
 
             current_frame.annotate()
             # Manual input as to whether the system has been able to maintain consistant player identity
@@ -92,8 +95,11 @@ class Run:
         while True:
             ret, frame = cap.read()
             if not ret: # If frame not found then exit
-                print("Frame not recieved. Exiting...")
+                # print("Frame not recieved. Exiting...")
                 break
+
+            sf = 720 / width 
+            frame = cv2.resize(frame, dsize=(720, int(height*sf)))
 
             # Create a new frame object and run the detector on it
             current_frame = Frame(frame_index, frame)
@@ -102,12 +108,13 @@ class Run:
             # Output the frame to screen
             if (frame_index == 0):
                 current_frame.annotate()
-                cv2.imshow('First Frame', current_frame.frame_anot)
+                if self.show:
+                    cv2.imshow('First Frame', current_frame.frame_anot)
             else:
                 if len(self.frames) < 5:
-                    current_frame.determine_ids(self.frames, self.heuristic)
+                    current_frame.determine_ids(self.frames, self.method)
                 else:
-                    current_frame.determine_ids(self.frames[-5:], self.heuristic)
+                    current_frame.determine_ids(self.frames[-5:], self.method)
 
             current_frame.annotate()
             # Manual input as to whether the system has been able to maintain consistant player identity
@@ -115,8 +122,9 @@ class Run:
             # Enter 1 if identities have been switched
 
             resize = cv2.resize(current_frame.frame_anot,dsize=None,fx=1.3,fy=1.3)
-            cv2.imshow('window_name', resize)
-            cv2.setWindowTitle('window_name', f'Frame {current_frame.index}')
+            if self.show:
+                cv2.imshow('window_name', resize)
+                cv2.setWindowTitle('window_name', f'Frame {current_frame.index}')
 
             self.frames.append(current_frame)
             frame_index += 1

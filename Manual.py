@@ -5,14 +5,14 @@ from Player import Player
 from ultralytics import YOLO
 
 class Manuel:
-    def __init__(self, model, vid_path) -> None:
+    def __init__(self, model, fp) -> None:
         self.model = model # Yolo model to be used
-        self.vid_path = vid_path+'.mp4' # Path to the video this run is using
+        self.file_path = fp+'.mp4' # Path to the video this run is using
         self.frames = [] # List of frames
     
     def main(self):
         # Open the video into OpenCV
-        cap = cv2.VideoCapture(self.vid_path)
+        cap = cv2.VideoCapture(self.file_path)
         width  = cap.get(3)
         height  = cap.get(4)
 
@@ -30,10 +30,11 @@ class Manuel:
             ret, frame = cap.read()
 
             if not ret: # If frame not found then exit
-                print("Frame not recieved. Exiting...")
+                # print("Frame not recieved. Exiting...")
                 break
 
-            frame = frame[0:int(height), 130:int(width)]
+            sf = 720 / width 
+            frame = cv2.resize(frame, dsize=(720, int(height*sf)))
 
             # Create a new frame object and run the detector on it
             current_frame = Frame(frame_index, frame)
@@ -88,8 +89,8 @@ class Manuel:
         cap.release()
         cv2.destroyAllWindows()
 
-    def export(self, file_path):
-        file = open(file_path + '_man_label.txt', 'w')
+    def export(self):
+        file = open(self.file_path + '_man_label.txt', 'w')
 
         for frame in self.frames:
             file.write('*\n')
@@ -102,8 +103,8 @@ class Manuel:
         file.write('/')
         file.close()
 
-    def import_run(self, file_path):
-        file = open(file_path + '_man_label.txt', 'r')
+    def import_run(self):
+        file = open(self.file_path + '_man_label.txt', 'r')
 
         lines = file.readlines()
         index = 0
@@ -114,7 +115,7 @@ class Manuel:
             if lines[index] == '*\n':
                 if not start:
                     self.frames.append(cur_frame)
-                cur_frame = Frame(lines[index+1])
+                cur_frame = Frame(int(lines[index+1]))
                 start = False
                 index += 2
             elif lines[index] == '/':
@@ -122,6 +123,6 @@ class Manuel:
             else:
                 bb = np.frombuffer(bytes.fromhex(lines[index+1]), dtype=np.float32)
                 new_player = Player(bb)
-                new_player.id = lines[index]
+                new_player.id = int(lines[index])
                 cur_frame.player_list.append(new_player)
                 index += 2
