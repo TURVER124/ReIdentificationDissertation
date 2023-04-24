@@ -87,24 +87,26 @@ class Frame:
                     lowest_diff = tot_diff
                     lowest_ind = index
                 index += 1
-                
-            if poss_play_ids[lowest_ind].dist_diff > lowest_diff:
-                poss_play_ids[lowest_ind].dist_diff = lowest_diff
-                poss_play_ids[lowest_ind].id = prev_player.id
-                taken_ids.append(prev_player.id)
+            
+            if len(poss_play_ids) > 0:
+                if poss_play_ids[lowest_ind].dist_diff > lowest_diff:
+                    poss_play_ids[lowest_ind].dist_diff = lowest_diff
+                    poss_play_ids[lowest_ind].id = prev_player.id
+                    taken_ids.append(prev_player.id)
 
 
         next_id = self.get_next_avil_id(frames)
+        f_used = 5
         for player in poss_play_ids:
             if player.id == -1:
                 pos_matches = []
-                if len(frames) < 5:
+                if len(frames) < f_used:
                     for s_frame in frames:
                         for pos_player in s_frame.player_list:
                             if pos_player.id not in taken_ids:
                                 pos_matches.append(copy.deepcopy(pos_player))
                 else:
-                    for s_frame in frames[-5:]:
+                    for s_frame in frames[-f_used:]:
                         for pos_player in s_frame.player_list:
                             if pos_player.id not in taken_ids:
                                 pos_matches.append(copy.deepcopy(pos_player))
@@ -174,6 +176,30 @@ class Frame:
                 return False
         else:
             return False
+        
+    
+    def colour(self, frames):
+        poss_play_ids = copy.deepcopy(self.player_list)
+
+        # Iterate through each player in the previous frame
+        # print("\n\n\n***NEW FRAME***")
+        for cur_player in poss_play_ids:
+            closest = 100000
+            closest_id = -1
+            # print("\n***NEW PLAYER***")
+            for s_frame in frames[::-1]:
+                for prev_player in s_frame.player_list:
+                    diff = cur_player.comp_colour(prev_player)
+                    if diff < closest:
+                        closest = diff
+                        closest_id = prev_player.id
+                        # print(f'{cur_player.bound_box} : {prev_player.bound_box}')
+                        # print(f'{cur_player.colour} : {prev_player.colour}')
+                        # print(f'Smallest diff: {closest}')
+                        # print(f'Best fit ID : {closest_id}')
+            cur_player.id = closest_id
+
+        return poss_play_ids                       
 
 
 
@@ -191,5 +217,10 @@ class Frame:
 
         elif heuristic == "BB_DIFF":
             pos_ids = self.bb_diff(frames)
+            for i in range(len(self.player_list)):
+                self.player_list[i].id = pos_ids[i].id
+
+        elif heuristic == "COLOUR":
+            pos_ids = self.colour(frames)
             for i in range(len(self.player_list)):
                 self.player_list[i].id = pos_ids[i].id

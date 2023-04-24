@@ -5,8 +5,9 @@ from Player import Player
 from ultralytics import YOLO
 
 class Manuel:
-    def __init__(self, model, fp) -> None:
+    def __init__(self, model, fp, mod_let) -> None:
         self.model = model # Yolo model to be used
+        self.model_letter = mod_let
         self.file_path = fp+'.mp4' # Path to the video this run is using
         self.frames = [] # List of frames
     
@@ -47,6 +48,7 @@ class Manuel:
             else:
                 detect_params = self.model.predict(source=[current_frame.frame_image], conf=0.45, save=False, show=False)
                 params = detect_params[0].numpy()
+                num_people = self.get_num_people(detect_params)
                 if len(params) != 0: # If objects have been detected
                     detected_object_list = detect_params[0].boxes
                     # Loop through each detected object
@@ -63,7 +65,12 @@ class Manuel:
                             cv2.rectangle(temp_frame,
                                     (int(bb[0]), int(bb[1])),
                                     (int(bb[2]), int(bb[3])), (255,0,0), 2)
+                            cv2.putText(temp_frame, str(num_people), 
+                                        (100, 100), 4, 3, (0,0,0))
                             cv2.imshow('Player', temp_frame)
+
+                            if num_people != 2:
+                                break
 
                             key = cv2.waitKey(0)
                             while key != ord('0') and key != ord('1') and key != ord('/') and key != ord('q'):
@@ -89,8 +96,22 @@ class Manuel:
         cap.release()
         cv2.destroyAllWindows()
 
+
+    def get_num_people(self, detect_params):
+        people = 0
+        params = detect_params[0].numpy()
+        if len(params) != 0: # If objects have been detected
+            detected_object_list = detect_params[0].boxes
+            # Loop through each detected object
+            for count in range(len(detect_params[0])): 
+                single_object = detected_object_list[count]
+                class_id = single_object.cls.numpy()[0]
+                if class_id == 0.0:
+                    people += 1
+        return people
+
     def export(self):
-        file = open(self.file_path + '_man_label.txt', 'w')
+        file = open(self.file_path + f'_man_label_{self.model_letter}.txt', 'w')
 
         for frame in self.frames:
             file.write('*\n')
@@ -104,7 +125,7 @@ class Manuel:
         file.close()
 
     def import_run(self):
-        file = open(self.file_path + '_man_label.txt', 'r')
+        file = open(self.file_path + f'_man_label_{self.model_letter}.txt', 'r')
 
         lines = file.readlines()
         index = 0

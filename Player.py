@@ -67,15 +67,17 @@ class Player:
         roi_hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
         # Green threshold and mask
-        lower_green = np.array([30, 25, 25])
-        upper_green = np.array([80, 255,255])
+        lower_green = np.array([45, 25, 25])
+        upper_green = np.array([65, 255,255])
         mask = cv2.inRange(roi_hsv, lower_green, upper_green)
 
         inv_mask = cv2.bitwise_not(mask)
         result = cv2.bitwise_and(roi, roi, mask = inv_mask)
 
-        clt = KMeans(n_clusters = 2, n_init='auto')
-        perc, centers, palette = self.palette(clt.fit(result.reshape(-1, 3)))
+        result_rgb = cv2.cvtColor(result, cv2.COLOR_HSV2RGB)
+
+        clt = KMeans(n_clusters = 2, init='k-means++', n_init=1)
+        perc, centers, palette = self.palette(clt.fit(result_rgb.reshape(-1, 3)))
 
         centers = np.array(centers)
         perc = np.array(perc)
@@ -87,10 +89,11 @@ class Player:
         self.colour = colour
 
     def is_same_colour(self, comp_player):
-        threshold = 10
-        if comp_player.colour[0] in range (self.colour[0]-threshold, self.colour[0]+threshold):
-            if comp_player.colour[1] in range (self.colour[1]-threshold, self.colour[1]+threshold):
-                if comp_player.colour[2] in range (self.colour[2]-threshold, self.colour[2]+threshold):
+        h_thresh = 10
+        sv_thresh = 10
+        if comp_player.colour[0] in range (self.colour[0]-h_thresh, self.colour[0]+h_thresh):
+            if comp_player.colour[1] in range (self.colour[1]-sv_thresh, self.colour[1]+sv_thresh):
+                if comp_player.colour[2] in range (self.colour[2]-sv_thresh, self.colour[2]+sv_thresh):
                     return True
                 else:
                     return False
@@ -98,6 +101,14 @@ class Player:
                 return False
         else:
             return False
+        
+    
+    def comp_colour(self, comp_player):
+        h_diff = abs(self.colour[0] - comp_player.colour[0])
+        s_diff = abs(self.colour[1] - comp_player.colour[1])
+        v_diff = abs(self.colour[2] - comp_player.colour[2])
+
+        return h_diff*3 + s_diff + v_diff
         
     
     def equal(self, sec_player):

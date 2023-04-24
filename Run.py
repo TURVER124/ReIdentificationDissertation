@@ -1,4 +1,4 @@
-import cv2
+import cv2, time
 from Frame import Frame
 
 class Run:
@@ -46,10 +46,7 @@ class Run:
                 current_frame.annotate()
                 cv2.imshow('First Frame', current_frame.frame_anot)
             else:
-                if len(self.frames) < 5:
-                    current_frame.determine_ids(self.frames, self.method)
-                else:
-                    current_frame.determine_ids(self.frames[-5:], self.method)
+                current_frame.determine_ids(self.frames, self.method)
 
             current_frame.annotate()
             # Manual input as to whether the system has been able to maintain consistant player identity
@@ -92,6 +89,7 @@ class Run:
         frame_index = 0
 
         # Setup through each frame of the video until finished
+        # for x in range(10):
         while True:
             ret, frame = cap.read()
             if not ret: # If frame not found then exit
@@ -111,10 +109,7 @@ class Run:
                 if self.show:
                     cv2.imshow('First Frame', current_frame.frame_anot)
             else:
-                if len(self.frames) < 5:
-                    current_frame.determine_ids(self.frames, self.method)
-                else:
-                    current_frame.determine_ids(self.frames[-5:], self.method)
+                current_frame.determine_ids(self.frames, self.method)
 
             current_frame.annotate()
             # Manual input as to whether the system has been able to maintain consistant player identity
@@ -123,11 +118,15 @@ class Run:
 
             resize = cv2.resize(current_frame.frame_anot,dsize=None,fx=1.3,fy=1.3)
             if self.show:
+                cv2.putText(resize, str(current_frame.index), 
+                            (100, 100), 4, 3, (0,0,0))
                 cv2.imshow('window_name', resize)
                 cv2.setWindowTitle('window_name', f'Frame {current_frame.index}')
 
             self.frames.append(current_frame)
             frame_index += 1
+
+            # time.sleep(2)
 
             if cv2.waitKey(1) == ord('q'):
                 break
