@@ -59,14 +59,14 @@ class Main:
 model = YOLO("yolov8x.pt", "v8")
 model_letter = 'x'
 
-# path = 'videos/Video4/Clip1'
+# path = 'videos/Video6/Clip3'
 
 method = ['NONE', 'BB_DIFF', 'COLOUR']
 # method = ['COLOUR']
 
 total_perc = [0.0, 0.0, 0.0]
 
-for vid in range(3):
+for vid in range(3,6):
     for clip in range(3):
         path = f'videos/Video{vid+1}/Clip{clip+1}'
 
@@ -80,7 +80,7 @@ for vid in range(3):
 
             if float(run.perc_yolo()) < 80.0:
                 print("NOT USEFUL VIDEO")
-            # print(f"Running with tracking method: {method[i]}")
+            print(f"Running with tracking method: {method[i]}")
             print(run.frame_status)
             print(f'Percentage Of Yolo Complete Detections: {perc_yolo}%')
             print(f'Percentage Maintained Consistent Identity: {perc_main}%')
