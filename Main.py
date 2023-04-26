@@ -60,15 +60,15 @@ class Main:
 model = YOLO("yolov8x.pt", "v8")
 model_letter = 'x'
 
-# method = ['NONE', 'BB_DIFF', 'COLOUR']
-method = ['NONE']
+method = ['NONE', 'BB_DIFF', 'COLOUR']
+# method = ['NONE']
 
 total_perc = [0.0, 0.0, 0.0]
 
-for vid in range(6):
-    for clip in range(3):
+for vid in range(1):
+    for clip in range(1):
         # path = f'videos/Video{vid+1}/Clip{clip+1}'
-        path = 'videos/Video7/Clip1'
+        path = 'videos/Video7/Clip2'
 
         # Keep percentage for each video
         video_perc_main_yolo = []
@@ -111,7 +111,7 @@ print(f'Total percentage over all tests: {total_perc}')
 
 
 
-# path = 'videos/Video7/Clip3'
+# path = 'videos/Video8/Clip2'
 
 # new_man = Manuel(model, path, model_letter)
 
