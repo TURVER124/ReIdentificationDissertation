@@ -108,7 +108,7 @@ class Player:
         s_diff = abs(self.colour[1] - comp_player.colour[1])
         v_diff = abs(self.colour[2] - comp_player.colour[2])
 
-        return h_diff*3 + s_diff + v_diff
+        return h_diff + s_diff + v_diff
         
     
     def equal(self, sec_player):

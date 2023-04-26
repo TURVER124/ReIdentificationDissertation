@@ -89,7 +89,7 @@ class Run:
         frame_index = 0
 
         # Setup through each frame of the video until finished
-        # for x in range(10):
+        # for x in range(5):
         while True:
             ret, frame = cap.read()
             if not ret: # If frame not found then exit
@@ -109,7 +109,10 @@ class Run:
                 if self.show:
                     cv2.imshow('First Frame', current_frame.frame_anot)
             else:
-                current_frame.determine_ids(self.frames, self.method)
+                if len(current_frame.player_list) == 2:
+                    current_frame.determine_ids(self.frames, self.method)
+                else:
+                    current_frame.player_list = []
 
             current_frame.annotate()
             # Manual input as to whether the system has been able to maintain consistant player identity
@@ -118,8 +121,8 @@ class Run:
 
             resize = cv2.resize(current_frame.frame_anot,dsize=None,fx=1.3,fy=1.3)
             if self.show:
-                cv2.putText(resize, str(current_frame.index), 
-                            (100, 100), 4, 3, (0,0,0))
+                # cv2.putText(resize, str(current_frame.index), 
+                #             (100, 100), 4, 3, (0,0,0))
                 cv2.imshow('window_name', resize)
                 cv2.setWindowTitle('window_name', f'Frame {current_frame.index}')
 

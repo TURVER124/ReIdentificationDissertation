@@ -1,0 +1,10 @@
+Running with tracking method: NONE
+Each frame status: 
+--
+ ['T', 'T', 'T', 'F', 'F', 'T', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'F', 'X', 'X', 'T', 'T']
+--
+Percentage Of Yolo Complete Detections: 41.67%
+Percentage Maintained Consistent Identity: ('29.17', '70.0')%
+Percentage Of Yolo Detections Where ID Maintained: 70.0%
+
+

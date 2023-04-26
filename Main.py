@@ -2,6 +2,7 @@ from ultralytics import YOLO
 from Run import Run
 from Manual import Manuel
 import numpy as np
+from colorama import Fore
 
 class Main:
     def __init__(self, fp, mod, ml, meth='NONE', show=False) -> None:
@@ -59,16 +60,18 @@ class Main:
 model = YOLO("yolov8x.pt", "v8")
 model_letter = 'x'
 
-# path = 'videos/Video6/Clip3'
-
 method = ['NONE', 'BB_DIFF', 'COLOUR']
-# method = ['COLOUR']
+# method = ['NONE']
 
 total_perc = [0.0, 0.0, 0.0]
 
-for vid in range(3,6):
+for vid in range(6):
     for clip in range(3):
         path = f'videos/Video{vid+1}/Clip{clip+1}'
+        # path = 'videos/Video7/Clip3'
+
+        # Keep percentage for each video
+        video_perc_main_yolo = []
 
         print(f'Video {vid+1} - Clip {clip+1}')
         save_file = open(f'{path}_results_{model_letter}.txt', 'w')
@@ -78,14 +81,9 @@ for vid in range(3,6):
             perc_main, perc_main_yolo = run.perc_maintined()
             perc_yolo = run.perc_yolo()
 
-            if float(run.perc_yolo()) < 80.0:
-                print("NOT USEFUL VIDEO")
-            print(f"Running with tracking method: {method[i]}")
-            print(run.frame_status)
-            print(f'Percentage Of Yolo Complete Detections: {perc_yolo}%')
-            print(f'Percentage Maintained Consistent Identity: {perc_main}%')
-            print(f'Percentage Of Yolo Detections Where ID Maintained: {perc_main_yolo}%')
-            print("\n")
+            print(f'{method[i]}: \n{run.frame_status}')
+
+            video_perc_main_yolo.append(perc_main_yolo)
 
             total_perc[i] += float(perc_main_yolo)
 
@@ -94,13 +92,26 @@ for vid in range(3,6):
             save_file.write(f'Percentage Of Yolo Complete Detections: {perc_yolo}%\n')
             save_file.write(f'Percentage Maintained Consistent Identity: {run.perc_maintined()}%\n')
             save_file.write(f'Percentage Of Yolo Detections Where ID Maintained: {perc_main_yolo}%\n\n\n')
+
+        if float(run.perc_yolo()) < 80.0:
+                print(Fore.RED + "**********NOT USEFUL VIDEO**********")
+        print(Fore.GREEN + f'Percentage of frames with complete detections: {perc_yolo}%')
+        print(f'Method:                                        {method}')
+        print(f'Percentage of frames with maintained IDs:      {video_perc_main_yolo}')
+        print(Fore.WHITE + "\n")
         save_file.close()
+    print("\n")
 
 
 print("\n\n")
 total_perc = np.array(total_perc) / float((vid+1)*(clip+1))
 print(f'Method:                          {method}')
 print(f'Total percentage over all tests: {total_perc}')
+
+
+
+
+# path = 'videos/Video7/Clip3'
 
 # new_man = Manuel(model, path, model_letter)
 
