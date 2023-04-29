@@ -1,0 +1,30 @@
+Running with tracking method: NONE
+Each frame status: 
+--
+ ['T', 'T', 'T', 'T', 'T', 'T', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'T', 'X', 'F', 'T', 'F', 'F', 'X', 'F', 'F', 'F', 'F', 'F', 'F', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'F', 'X', 'X', 'X', 'X', 'X', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T']
+--
+Percentage Of Yolo Complete Detections: 75.0%
+Percentage Maintained Consistent Identity: ('25.0', '33.33')%
+Percentage Of Yolo Detections Where ID Maintained: 33.33%
+
+
+Running with tracking method: BB_DIFF
+Each frame status: 
+--
+ ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'X', 'T', 'T', 'T', 'T', 'X', 'T', 'T', 'T', 'T', 'T', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'F', 'X', 'X', 'X', 'X', 'X', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']
+--
+Percentage Of Yolo Complete Detections: 75.0%
+Percentage Maintained Consistent Identity: ('71.67', '95.56')%
+Percentage Of Yolo Detections Where ID Maintained: 95.56%
+
+
+Running with tracking method: COLOUR
+Each frame status: 
+--
+ ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'X', 'T', 'T', 'T', 'T', 'X', 'T', 'T', 'T', 'T', 'T', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'X', 'X', 'X', 'X', 'X', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']
+--
+Percentage Of Yolo Complete Detections: 75.0%
+Percentage Maintained Consistent Identity: ('73.33', '97.78')%
+Percentage Of Yolo Detections Where ID Maintained: 97.78%
+
+
