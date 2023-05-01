@@ -61,14 +61,16 @@ model = YOLO("yolov8x.pt", "v8")
 model_letter = 'x'
 
 method = ['NONE', 'BB_DIFF', 'COLOUR']
-# method = ['NONE']
+# method = ['BB_DIFF']
 
 total_perc = [0.0, 0.0, 0.0]
 
-for vid in range(10):
-    for clip in range(3):
-        path = f'videos/Video{vid+1}/Clip{clip+1}'
-        # path = 'videos/Video9/Clip1'
+counter = 0
+
+for vid in range(1):
+    for clip in range(1):
+        # path = f'videos/Video{vid+1}/Clip{clip+1}'
+        path = 'videos/Video3/Clip3'
 
         # Keep percentage for each video
         video_perc_main_yolo = []
@@ -89,16 +91,22 @@ for vid in range(10):
             total_perc[i] += float(perc_main_yolo)
             
             # Save the result to be re-imported later
+            if i == 0:
+                save_file.write(f'{len(run.frame_status)}\n')
+                save_file.write(f'{perc_yolo}\n')
             save_file.write(f'{perc_main_yolo}\n')
 
             # Save the results with their meanings to a file
             save_file_full.write(f"Running with tracking method: {method[i]}\n")
             save_file_full.write(f'Each frame status: \n--\n {run.frame_status}\n--\n')
+            save_file_full.write(f'Total number of frames: {len(run.frame_status)}')
             save_file_full.write(f'Percentage Of Yolo Complete Detections: {perc_yolo}%\n')
             save_file_full.write(f'Percentage Maintained Consistent Identity: {run.perc_maintined()}%\n')
             save_file_full.write(f'Percentage Of Yolo Detections Where ID Maintained: {perc_main_yolo}%\n\n\n')
+        
+        counter += 1
 
-        if float(run.perc_yolo()) < 75.0:
+        if float(run.perc_yolo()) < 70.0:
                 print(Fore.RED + "**********NOT USEFUL VIDEO**********")
         print(Fore.GREEN + f'Percentage of frames with complete detections: {perc_yolo}%')
         print(f'Method:                                        {method}')
@@ -108,16 +116,15 @@ for vid in range(10):
         save_file.close()
     print("\n")
 
-
 print("\n\n")
-total_perc = np.array(total_perc) / float((vid+1)*(clip+1))
+total_perc = np.array(total_perc) / counter
 print(f'Method:                          {method}')
 print(f'Total percentage over all tests: {total_perc}')
 
 
 
 
-# path = 'videos/Video8/Clip3'
+# path = 'videos/Video3/Clip3'
 
 # new_man = Manuel(model, path, model_letter)
 

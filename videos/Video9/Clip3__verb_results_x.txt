@@ -3,7 +3,7 @@ Each frame status:
 --
  ['T', 'T', 'F', 'F', 'F', 'F', 'F', 'F', 'T', 'F', 'T', 'F', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T']
 --
-Percentage Of Yolo Complete Detections: 81.63%
+Total number of frames: 49Percentage Of Yolo Complete Detections: 81.63%
 Percentage Maintained Consistent Identity: ('59.18', '72.5')%
 Percentage Of Yolo Detections Where ID Maintained: 72.5%
 
@@ -13,7 +13,7 @@ Each frame status:
 --
  ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F']
 --
-Percentage Of Yolo Complete Detections: 81.63%
+Total number of frames: 49Percentage Of Yolo Complete Detections: 81.63%
 Percentage Maintained Consistent Identity: ('44.9', '55.0')%
 Percentage Of Yolo Detections Where ID Maintained: 55.0%
 
@@ -21,10 +21,10 @@ Percentage Of Yolo Detections Where ID Maintained: 55.0%
 Running with tracking method: COLOUR
 Each frame status: 
 --
- ['T', 'T', 'F', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'F', 'F', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'F', 'F', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'F']
+ ['T', 'T', 'F', 'F', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'F', 'F', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'F', 'F', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'F']
 --
-Percentage Of Yolo Complete Detections: 81.63%
-Percentage Maintained Consistent Identity: ('61.22', '75.0')%
-Percentage Of Yolo Detections Where ID Maintained: 75.0%
+Total number of frames: 49Percentage Of Yolo Complete Detections: 81.63%
+Percentage Maintained Consistent Identity: ('57.14', '70.0')%
+Percentage Of Yolo Detections Where ID Maintained: 70.0%
 
 

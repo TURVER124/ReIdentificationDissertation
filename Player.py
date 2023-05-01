@@ -4,14 +4,10 @@ from collections import Counter
 import numpy as np
 
 class Player:
-    def __init__(self, bb, conf=0) -> None:
+    def __init__(self, bb) -> None:
         self.id = -1
         self.bound_box = bb
-        self.confidence = conf
         self.colour = []
-        self.dist_diff = 100000
-        self.speed = 0
-        self.direction = None
 
     def get_bb_size(self):
         width = (self.bound_box[2]) - (self.bound_box[0])

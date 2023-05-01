@@ -55,11 +55,10 @@ class Manuel:
                     for count in range(len(detect_params[0])): 
                         single_object = detected_object_list[count]
                         class_id = single_object.cls.numpy()[0]
-                        conf = single_object.conf.numpy()[0]
                         bb = single_object.xyxy.numpy()[0]
 
                         if class_id == 0.0: # Check the class of the detected object is a person
-                            next_player = Player(bb, conf) # Create new player object
+                            next_player = Player(bb) # Create new player object
                         
                             temp_frame = copy.copy(current_frame.frame_image)
                             cv2.rectangle(temp_frame,

@@ -1,4 +1,4 @@
-import cv2, time
+import cv2, os
 from Frame import Frame
 
 class Run:
@@ -6,7 +6,6 @@ class Run:
         self.model = model # Yolo model to be used
         self.vid_path = vid_path+'.mp4' # Path to the video this run is using
         self.frames = [] # List of frames
-        self.percent_corr = 0 # Percentage of fames with consistent identities
         self.method = meth
         self.show = show
 
@@ -80,6 +79,9 @@ class Run:
         width  = cap.get(3)
         height  = cap.get(4)
 
+        if not os.path.exists(f'{self.vid_path[:-4]}_{self.method}'):
+            os.mkdir(f'{self.vid_path[:-4]}_{self.method}')
+
         # If the video is not found, print error message and exit
         if not cap.isOpened():
             print("Unable to open specified video")
@@ -109,15 +111,13 @@ class Run:
                 if self.show:
                     cv2.imshow('First Frame', current_frame.frame_anot)
             else:
+                # Check if both players have been correctly detected
                 if len(current_frame.player_list) == 2:
                     current_frame.determine_ids(self.frames, self.method)
                 else:
                     current_frame.player_list = []
 
-            current_frame.annotate()
-            # Manual input as to whether the system has been able to maintain consistant player identity
-            # Enter 0 if the identities are maintained from first frame
-            # Enter 1 if identities have been switched
+                current_frame.annotate()
 
             resize = cv2.resize(current_frame.frame_anot,dsize=None,fx=1.3,fy=1.3)
             if self.show:
@@ -126,10 +126,10 @@ class Run:
                 cv2.imshow('window_name', resize)
                 cv2.setWindowTitle('window_name', f'Frame {current_frame.index}')
 
+                cv2.imwrite(f'{self.vid_path[:-4]}_{self.method}/{current_frame.index}.jpeg', resize)
+
             self.frames.append(current_frame)
             frame_index += 1
-
-            # time.sleep(2)
 
             if cv2.waitKey(1) == ord('q'):
                 break

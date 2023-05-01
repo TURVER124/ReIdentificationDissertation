@@ -3,7 +3,7 @@ Each frame status:
 --
  ['T', 'T', 'T', 'T', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'T', 'F', 'T', 'T', 'T', 'F', 'T', 'F', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'F', 'T', 'F', 'T', 'T', 'T', 'T', 'T']
 --
-Percentage Of Yolo Complete Detections: 80.0%
+Total number of frames: 35Percentage Of Yolo Complete Detections: 80.0%
 Percentage Maintained Consistent Identity: ('42.86', '53.57')%
 Percentage Of Yolo Detections Where ID Maintained: 53.57%
 
@@ -13,7 +13,7 @@ Each frame status:
 --
  ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']
 --
-Percentage Of Yolo Complete Detections: 80.0%
+Total number of frames: 35Percentage Of Yolo Complete Detections: 80.0%
 Percentage Maintained Consistent Identity: ('80.0', '100.0')%
 Percentage Of Yolo Detections Where ID Maintained: 100.0%
 
@@ -21,10 +21,10 @@ Percentage Of Yolo Detections Where ID Maintained: 100.0%
 Running with tracking method: COLOUR
 Each frame status: 
 --
- ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'F', 'T', 'F', 'F', 'F', 'F', 'F']
+ ['T', 'T', 'T', 'T', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'T', 'T', 'T', 'F', 'T', 'F', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T']
 --
-Percentage Of Yolo Complete Detections: 80.0%
-Percentage Maintained Consistent Identity: ('57.14', '71.43')%
-Percentage Of Yolo Detections Where ID Maintained: 71.43%
+Total number of frames: 35Percentage Of Yolo Complete Detections: 80.0%
+Percentage Maintained Consistent Identity: ('42.86', '53.57')%
+Percentage Of Yolo Detections Where ID Maintained: 53.57%
 
 
