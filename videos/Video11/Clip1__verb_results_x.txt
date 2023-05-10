@@ -21,7 +21,7 @@ Percentage Of Yolo Detections Where ID Maintained: 100.0%
 Running with tracking method: COLOUR
 Each frame status: 
 --
- ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'F', 'T', 'T', 'T', 'T', 'F', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'T', 'X', 'T', 'T', 'T', 'T', 'F', 'T', 'F']
+ ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'T', 'X', 'T', 'T', 'F', 'F', 'F', 'T', 'T']
 --
 Total number of frames: 34Percentage Of Yolo Complete Detections: 73.53%
 Percentage Maintained Consistent Identity: ('58.82', '80.0')%

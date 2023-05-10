@@ -2,6 +2,7 @@ import math, cv2
 from sklearn.cluster import KMeans
 from collections import Counter
 import numpy as np
+from ultralytics import YOLO
 
 class Player:
     def __init__(self, bb) -> None:
@@ -63,14 +64,14 @@ class Player:
         roi_hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
         # Green threshold and mask
-        lower_green = np.array([45, 25, 25])
-        upper_green = np.array([65, 255,255])
+        lower_green = np.array([40, 25, 25])
+        upper_green = np.array([70, 255,255])
         mask = cv2.inRange(roi_hsv, lower_green, upper_green)
 
         inv_mask = cv2.bitwise_not(mask)
         result = cv2.bitwise_and(roi, roi, mask = inv_mask)
 
-        result_rgb = cv2.cvtColor(result, cv2.COLOR_HSV2RGB)
+        result_rgb = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
 
         clt = KMeans(n_clusters = 2, init='k-means++', n_init=1)
         perc, centers, palette = self.palette(clt.fit(result_rgb.reshape(-1, 3)))
@@ -119,4 +120,3 @@ class Player:
 
     def __str__(self):
         return f'Player ID: {self.id}'
-    

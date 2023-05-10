@@ -67,10 +67,10 @@ total_perc = [0.0, 0.0, 0.0]
 
 counter = 0
 
-for vid in range(1):
+for vid in range(10, 11):
     for clip in range(1):
-        # path = f'videos/Video{vid+1}/Clip{clip+1}'
-        path = 'videos/Video3/Clip3'
+        path = f'videos/Video{vid+1}/Clip{clip+1}'
+        # path = 'videos/Video1/Clip1'
 
         # Keep percentage for each video
         video_perc_main_yolo = []
@@ -116,15 +116,15 @@ for vid in range(1):
         save_file.close()
     print("\n")
 
-print("\n\n")
-total_perc = np.array(total_perc) / counter
-print(f'Method:                          {method}')
-print(f'Total percentage over all tests: {total_perc}')
+# print("\n\n")
+# total_perc = np.array(total_perc) / counter
+# print(f'Method:                          {method}')
+# print(f'Total percentage over all tests: {total_perc}')
 
 
 
 
-# path = 'videos/Video3/Clip3'
+# path = 'videos/Video11/Clip3'
 
 # new_man = Manuel(model, path, model_letter)
 
